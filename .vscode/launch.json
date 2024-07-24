@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C#: AndyARC",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/solutions/AndyARC/AndyARC.csproj",
+            "launchConfigurationId": "TargetFramework=;AndyARC",            
+        }
+    ]
+}

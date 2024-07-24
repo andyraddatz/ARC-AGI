@@ -2,6 +2,22 @@ namespace AndyARC.Core
 {
     public static class Knowledge
     {
+        public static Func<int[][], int[][]> SolvePuzzle = (xy) =>
+        {
+            // this function should return an array of unique numbers in the input array
+            // in the order they appear in the input array
+            int[][] finalXY = [];
+            for (var row = 0; row < xy.Length; row++)
+            {
+                if (row == 0)
+                    finalXY = [DeDupe(xy[row])];
+
+                else if (!finalXY[^1].SequenceEqual(DeDupe(xy[row])))
+                    finalXY = [.. finalXY, DeDupe(xy[row])];
+            }
+
+            return finalXY;
+        };
         public static int[] DeDupe(int[] x)
         {
             // this function should return an array of unique numbers in the input array
