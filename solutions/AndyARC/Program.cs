@@ -1,23 +1,25 @@
 ﻿using System.Text.Json;
 using AndyARC.Core;
 
-var actionsFromSystem2 = new List<Func<int[][], int[][]>>
-{
-    Knowledge.DeDupeXY
-};
-
-// todo: define an ARC-AGI solver with a rhizome structure
+// ARC-AGI solver
 Console.WriteLine("ARC-AGI Solver");
+
+// todo: lots more actions
+var actions = SystemOne.Actions;
+
+// training
 Console.WriteLine("Training set...");
 var trainingFiles = Directory.GetFiles("../../data/training", "*.json");
-SolvePuzzles(trainingFiles, actionsFromSystem2);
+var (tests, wins) = SolvePuzzles(trainingFiles, actions);
+Console.WriteLine($"Training set Tests: {tests}, Wins: {wins}");
 
 // eval
 var evalFiles = Directory.GetFiles("../../data/evaluation", "*.json");
 Console.WriteLine("Evaluation set...");
-SolvePuzzles(evalFiles, actionsFromSystem2);
+(tests, wins) = SolvePuzzles(evalFiles, actions);
+Console.WriteLine($"Evaluation set Tests: {tests}, Wins: {wins}");
 
-static void SolvePuzzles(string[] puzzleFiles, List<Func<int[][], int[][]>> actions)
+static (int, int) SolvePuzzles(string[] puzzleFiles, IEnumerable<Func<int[][], int[][]>> actions)
 {
     var tests = 0;
     var wins = 0;
@@ -25,42 +27,48 @@ static void SolvePuzzles(string[] puzzleFiles, List<Func<int[][], int[][]>> acti
     {
         var puz = JsonSerializer.Deserialize<Puzzle>(File.ReadAllText(filePath))
             ?? throw new Exception($"Failed to load puzzle from {filePath}");
-        // training samples
-        int[][] modified;
-        foreach (var action in actions)
-        {
-            var taskNumber = 0;
-            foreach (var t in puz.Train)
-            {
-                modified = action(t.Input);
 
-                if (IsMatch(t, modified))
+        // training samples
+        var taskNumber = 0;
+        foreach (var t in puz.Train)
+        {
+            foreach (var action in actions)
+            {
+                var modified = action(t.Input);
+
+                if (IsMatch(t.Output, modified))
                     Console.WriteLine($"Train WIN: {Path.GetFileName(filePath)} task {taskNumber} - {action.Method.Name}");
 
-                taskNumber++;
             }
-            foreach (var t in puz.Test)
+            taskNumber++;
+        }
+
+        taskNumber = 0;
+        foreach (var t in puz.Test)
+        {
+            foreach (var action in actions)
             {
                 // test samples
-                modified = action(t.Input);
-                if (IsMatch(t, modified))
+                var modified = action(t.Input);
+                if (IsMatch(t.Output, modified))
                 {
                     wins++;
-                    Console.WriteLine($"TEST WIN: {Path.GetFileName(filePath)} - {action.Method.Name}");
+                    Console.WriteLine($"TEST WIN: {Path.GetFileName(filePath)} task {taskNumber} - {action.Method.Name}");
                 }
-                tests++;
             }
+            taskNumber++;
+            tests++;
         }
     }
-    Console.WriteLine($"Tests: {tests}, Wins: {wins}");
+    return (tests, wins);
 }
 
-static bool IsMatch(ARCSample t, int[][] solution)
+static bool IsMatch(int[][] actual, int[][] proposed)
 {
-    var match = t.Output.Length == solution.Length;
-    for (var i = 0; i < t.Output.Length; i++)
+    var match = actual.Length == proposed.Length;
+    for (var i = 0; i < actual.Length; i++)
     {
-        match = match && t.Output[i].SequenceEqual(solution[i]);
+        match = match && actual[i].SequenceEqual(proposed[i]);
     }
 
     return match;
