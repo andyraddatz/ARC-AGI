@@ -8,6 +8,23 @@ public static class SystemOne
         Transpose,
         DeDupeXY,
     ];
+    public static int[][] PaintBorder(int[][] x, int color)
+    {
+        // this function should return the input array with its outer edge painted with the given color
+        // e.g. PaintBorder([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 9) => [[9, 9, 9], [9, 5, 9], [9, 9, 9]]
+        var xBorder = Matrix<float>.Build.DenseOfRowArrays(x.Select(row => row.Select(val => (float)val).ToArray()));
+        for (var row = 0; row < xBorder.RowCount; row++)
+        {
+            for (var col = 0; col < xBorder.ColumnCount; col++)
+            {
+                if (row == 0 || row == xBorder.RowCount - 1 || col == 0 || col == xBorder.ColumnCount - 1)
+                {
+                    xBorder[row, col] = color;
+                }
+            }
+        }
+        return xBorder.ToColumnArrays().Select(row => row.Select(val => (int)val).ToArray()).ToArray();
+    }
     public static int[][] Transpose(int[][] x)
     {
         // this function should return the transpose of the input array
