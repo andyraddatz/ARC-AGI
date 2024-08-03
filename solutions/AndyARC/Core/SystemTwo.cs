@@ -26,7 +26,7 @@ public static class SystemTwo
             {
                 wins++;
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"TEST WIN: {Path.GetFileName(filePath)}", ConsoleColor.Green);
+                Console.WriteLine($"TEST WIN: {Path.GetFileName(filePath)}");
                 Console.ForegroundColor = default;
             }
             puzzles++;
@@ -36,6 +36,26 @@ public static class SystemTwo
 
     private static Func<int[][], int[][]> GetAction(Puzzle puz, string puzName)
     {
+        // todo: algorithmize problem solving
+        foreach (var t in puz.Train)
+        {
+            // list objects of the training inputs
+            // t.InputObjects = SystemOne.ExtractObjects(t.Input);
+            // list objects of the training outputs
+            // t.OutputObjects = SystemOne.ExtractObjects(t.Output);
+            // list features of the goal
+            t.GoalFeatures = SystemOne.ExtractGoalFeatures(t.Input, t.Output);
+        }
+
+        // list features of the test inputs
+        foreach (var t in puz.Test) t.InputObjects = SystemOne.ExtractObjects(t.Input);
+
+        // devise action plan
+        //      find features in common between training inputs + test inputs
+        //      generate hypotheses for action(s) that transforms ARC inputs to outputs
+        //          verify hypothesis for all training inputs->outputs
+        //          verify action is plausible for the test inputs
+        // use action plan to generate test outputs
 
         Func<int[][], int[][]> compoundAction = (x) =>
         {
@@ -46,8 +66,7 @@ public static class SystemTwo
             }
             return modified;
         };
-        var allFuncs = SystemOne.Actions;
-        allFuncs = allFuncs.Append(compoundAction);
+        var allFuncs = SystemOne.Actions.Append(compoundAction);
 
         foreach (var action in allFuncs)
         {
