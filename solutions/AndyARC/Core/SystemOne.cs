@@ -4,27 +4,41 @@ using AndyARC.Core.Features;
 using MathNet.Numerics.LinearAlgebra;
 public static class SystemOne
 {
+    public static readonly int[] Colors = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     public readonly static IEnumerable<Func<int[][], int[][]>> Actions =
-    [
+    new List<Func<int[][], int[][]>> {
         Transpose,
         DeDupeXY,
-    ];
+        RotateSquares90
+    }.Union(PaintBorders());
+
+    private static IEnumerable<Func<int[][], int[][]>> PaintBorders()
+    {
+        return Colors.Select(color => (Func<int[][], int[][]>)(x => PaintBorder(x, color)));
+    }
+
     public static int[][] PaintBorder(int[][] x, int color)
     {
         // this function should return the input array with its outer edge painted with the given color
         // e.g. PaintBorder([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 9) => [[9, 9, 9], [9, 5, 9], [9, 9, 9]]
-        var xBorder = Matrix<float>.Build.DenseOfRowArrays(x.Select(row => row.Select(val => (float)val).ToArray()));
-        for (var row = 0; row < xBorder.RowCount; row++)
+        var rowIter = 0;
+        foreach (var row in x)
         {
-            for (var col = 0; col < xBorder.ColumnCount; col++)
+            if (rowIter == 0 || rowIter == x.Length - 1)
             {
-                if (row == 0 || row == xBorder.RowCount - 1 || col == 0 || col == xBorder.ColumnCount - 1)
+                for (var col = 0; col < row.Length; col++)
                 {
-                    xBorder[row, col] = color;
+                    row[col] = color;
                 }
             }
+            else
+            {
+                row[0] = color;
+                row[^1] = color;
+            }
+            rowIter++;
         }
-        return xBorder.ToColumnArrays().Select(row => row.Select(val => (int)val).ToArray()).ToArray();
+        return x;
     }
     public static int[][] Transpose(int[][] x)
     {
@@ -66,6 +80,26 @@ public static class SystemOne
         return finalXY;
     }
 
+    public static int[][] RotateSquares90(int[][] x)
+    {
+        try
+        {
+            if (!x.All(r => r.Length == x.Length))
+            {
+                return x;
+            }
+            // this function should return the input array rotated 90 degrees clockwise
+            // e.g. Rotate90([[1, 2], [4, 5]]) => [[4, 1], [5, 2]]
+            var xMatrix = Matrix<float>.Build.DenseOfRowArrays(x.Select(row => row.Select(val => (float)val).ToArray()));
+            var xRot = xMatrix.ToColumnArrays().Select(row => row.Reverse().Select(val => (int)val).ToArray()).ToArray();
+            return xRot;
+        }
+        catch (System.Exception e)
+        {
+
+            throw;
+        }
+    }
     public static IEnumerable<ObjectFeature> ExtractObjects(int[][] input)
     {
         IEnumerable<ObjectFeature> output = [];
@@ -110,7 +144,7 @@ public static class SystemOne
 
     public static IEnumerable<GoalFeature>? ExtractGoalFeatures(int[][] input, int[][] output)
     {
-
+        return [];
         // b. Goal-directedness prior:
 
         // While ARC does not feature the concept of time, many of the input/output grids can be

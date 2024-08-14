@@ -19,6 +19,7 @@ public class ObjectFeature
 {
     public required Point StartXY { get; set; }
     public required Point EndXY { get; set; }
+    public required int[][] RawData { get; set; }
     public int Height => EndXY.Y - StartXY.Y;
     public int Width => EndXY.X - StartXY.X;
     public bool IsSquare => Height == Width;

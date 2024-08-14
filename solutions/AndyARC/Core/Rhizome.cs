@@ -10,4 +10,24 @@ public class Rhizome
     
     public HashSet<RhizomeUnit> RhizomeUnits { get; set; } = [];
     public IReadOnlySet<string> Ontology => RhizomeUnits.Select(x => x.OntologyRef).ToImmutableHashSet();
+
+    public static Rhizome SampleRhizome()
+    {
+        Guid _selfId = Guid.NewGuid();
+        Guid _worldId = Guid.NewGuid();
+        Guid _selfWorldId = Guid.NewGuid();
+        Guid _gridId = Guid.NewGuid();
+        var rhizome = new Rhizome {
+            RhizomeUnits = [
+                new(_selfId, _selfId, "self"),
+                new(_worldId, _worldId, "world"),
+                new(_selfId, _worldId, "self-world"),
+                new(_worldId, _selfId, "world-self"),
+                new(_selfWorldId, _selfWorldId, "self-world"),
+
+                // new(_gridId, _gridId, "grid"),
+            ]
+        };
+        return rhizome;
+    }
 }
