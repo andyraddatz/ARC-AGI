@@ -16,5 +16,4 @@ public class ARCSample(int[][] input, int[][] output)
 
     // goal-directedness
     public IEnumerable<GoalFeature>? GoalFeatures { get; set; } = null;
-
 }

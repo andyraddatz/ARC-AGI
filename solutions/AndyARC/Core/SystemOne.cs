@@ -16,6 +16,7 @@ public static class SystemOne
         ReflectHorizontally,
         ReflectVertically,
         Rotate180,
+        Rotate270,
         InvertColors
     }.Union(PaintBorders());
 
@@ -86,7 +87,7 @@ public static class SystemOne
 
         return finalXY;
     }
-    
+
     public static int[][] RotateSquares90(int[][] x)
     {
         try
@@ -328,7 +329,7 @@ public static class SystemOne
 
         return outputArray;
     }
-public static List<List<(int, int)>> DetectObjects(int[][] inputArray)
+    public static List<List<(int, int)>> DetectObjects(int[][] inputArray)
     {
         int numRows = inputArray.Length;
         int numCols = inputArray[0].Length;
@@ -378,5 +379,25 @@ public static List<List<(int, int)>> DetectObjects(int[][] inputArray)
         FloodFill(inputArray, visited, x, y + 1, color, obj);
     }
 
+    public static int[][] Rotate270(int[][] arr)
+    {
+        int n = arr.Length;
+        for (int i = 0; i < n / 2; i++)
+        {
+            int j = i + (n - i - 1);
+            int[] temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+        for (int i = 0; i < n / 2; i++)
+        {
+            int j = 2 * i + 1;
+            int k = n - j;
+            int[] temp = arr[j];
+            arr[j] = arr[k];
+            arr[k] = temp;
+        }
+        return arr;
+    }
 
 }

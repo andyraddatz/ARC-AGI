@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 namespace AndyARC.Core;
 
 public static class SystemTwo
@@ -12,10 +10,8 @@ public static class SystemTwo
         var wins = 0;
         foreach (var filePath in puzzleFilePaths)
         {
-            var puz = JsonSerializer.Deserialize<Puzzle>(File.ReadAllText(filePath))
-                ?? throw new Exception($"Failed to load puzzle from {filePath}");
-
-            var action = GetAction(puz, Path.GetFileName(filePath));
+            var puz = Puzzle.FromJson(filePath);
+            var action = GetAction(puz);
             var win = false;
             foreach (var t in puz.Test)
             {
@@ -26,7 +22,7 @@ public static class SystemTwo
             {
                 wins++;
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"TEST WIN: {Path.GetFileName(filePath)}");
+                Console.WriteLine($"TEST WIN: {puz.Name}");
                 Console.ForegroundColor = default;
             }
             puzzles++;
@@ -34,7 +30,7 @@ public static class SystemTwo
         return (puzzles, wins);
     }
 
-    private static Func<int[][], int[][]> GetAction(Puzzle puz, string puzName)
+    private static Func<int[][], int[][]> GetAction(Puzzle puz)
     {
         // todo: algorithmize problem solving
         foreach (var t in puz.Train)
@@ -56,7 +52,7 @@ public static class SystemTwo
                 var modified = action(t.Input);
                 if (IsMatch(t.Output, modified))
                 {
-                    Console.WriteLine($"Training match: {puzName} - {action.Method.Name}");
+                    Console.WriteLine($"Training match: {puz.Name} - {action.Method.Name}");
                     candidateFound = candidateFound && IsMatch(t.Output, modified);
                 }
                 candidateFound = candidateFound && IsMatch(t.Output, modified);

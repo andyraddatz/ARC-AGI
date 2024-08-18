@@ -20,7 +20,7 @@
 - "Intelligence is sensitivity to abstract analogies. In fact, that's pretty much all there is to it.  If you have a high sensitivity to analogies, then you will extract powerful abstractions from little experience, and you will be able to use these abstractions to make sense of a maximally large area of future experience space." - FC
 - Abstraction is a spectrum, not binary
   - Factoids: degree zero = memorization = functions with no argument 
-    - `def two_plus_two(): return 4; def three_plus_three(): return 9;`
+    - `def two_plus_two(): return 4; def three_plus_three(): return 6;`
   - Abstraction 
     - `def two_plus_x(x): return 2 + x;` is abstract for `x`
     - `def addition(x, y): x + y;` even more abstract
@@ -54,7 +54,7 @@
     - Type 2 when you calculate step by step
     - Cannot do this for every possible move (comb. explosion)
     - Intuition from experience is used to narrow down the discrete search space
-- System 1 helps system 2 (apparently I've had these backwards) by alleviating comb. explosion via turning a lot of discrete data into a data structure that enables fast, approximate judgment calls about the target discrete space
+- System 1 helps system 2 by alleviating comb. explosion via turning a lot of discrete data into a data structure that enables fast, approximate judgment calls about the target discrete space
   - key idea: use fast-but-maybe-wrong judgment calls to keep comb. explosion in check
   - analogy: "draw a map"
     - take a space of discrete objects with discrete relationships that would normally require combinatorial search (all nodes in the map)
@@ -86,12 +86,12 @@
 - FC said things he saw/learned while his kids grow up (age 1-2 especially) inspired things in ARC (hint for winning)
   - few-shot learning ex: crawling to an object as a baby
     - know your current state
-    - can visualize/extrapolate your goal (future state) 
+    - can visualize/extrapolate your goal (future state)
       - "latent representation of your target"
     - planning between the 2 (few-shot PS)
     - trying to execute, restarting
 
-## templating english language tasks to solve programs
+## approach: templating english language task descriptions that solve programs (describe the solution like I would to another person)
 
 - puzzle 63613498
 - `copy the input to the output then find two objects with the same shape and turn one gray that is not in the upper left quadrant`
@@ -108,4 +108,4 @@
 - puzzle a85d4709
 - `for each row in the input, create a row in the output of the same size and color the entire row based on the placement of the gray square in the input: 0,1,2 -> red, yellow, green`
 - puzzle c8cbb738
-- `
+- 
