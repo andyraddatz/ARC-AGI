@@ -1,6 +1,97 @@
 # brainstorming
 
-- english language tasks to programs
+## notes from [Chollet talk](https://www.youtube.com/live/Me187k6RQlQ?si=pgCYpSVpQpEZw5VX&t=1088)
+- quantifiable properties of intelligence
+  - Fluidity
+  - Operational area
+  - Information efficiency
+- "Generalization is the relationship between the information you have (the priors that you're born with and the experience you've acquired over the course of your lifetime) and your operational area (over the space of potential future situations that you might encounter as an agent (which will feature uncertainty and novelty, they will not be like the past)); the efficiency with which you operationalize past information in order to deal with the future - you can interpret it as a conversion ratio [link to on the measure of intelligence]" - FC
+- ARC-AGI dataset is
+  - assumes Core Knowledge priors [link OTMOI]
+    - Objectness
+    - Numbers
+    - Agentness
+    - Geometry and topology
+  - every puzzle is different, no memorization
+  - controls for experience
+    - few-shot learning to infer the program that controls all examples and the answer
+    - should not be dependent on acquired knowledge (e.g. English language)
+- "Abstraction is the engine through which to produce generalization." - FC
+- "Intelligence is sensitivity to abstract analogies. In fact, that's pretty much all there is to it.  If you have a high sensitivity to analogies, then you will extract powerful abstractions from little experience, and you will be able to use these abstractions to make sense of a maximally large area of future experience space." - FC
+- Abstraction is a spectrum, not binary
+  - Factoids: degree zero = memorization = functions with no argument 
+    - `def two_plus_two(): return 4; def three_plus_three(): return 9;`
+  - Abstraction 
+    - `def two_plus_x(x): return 2 + x;` is abstract for `x`
+    - `def addition(x, y): x + y;` even more abstract
+  - Fluid intelligence, abstraction generation: 
+    - `def find_model(examples): ... return model_function;`
+  - AGI: 
+    - `def find_model(very_few_examples): ... return model_function;`
+  - Two poles of abstraction (type 1 vs 2)
+    - "Comparing things and merging individual experiences into common abstractions by erasing details about the instances that don't matter"
+    - Continuous domain vs discrete domain
+    - Value-centric (prototype-centric)
+      - Comparing things via continuous function like dot-product in LLMs or L2-distance
+        - this is basically what powers human perception and cognition
+    - Program-centric abstraction
+      - Comparing Discrete programs "which are graphs" by looking for exact sub-graph isomorphisms (sub-graph matching)
+        - a la software engineering
+  - Analogy-making is the engine that produces abstraction
+    - Value-analogies are rooted in geometry (distance functions, etc)
+    - Program-analogies are grounded in topology (exact sub-graph matching)
+    - all cognition arises as interplay between these 2
+    - left vs right-brain analogy (type 1 vs 2) can be useful for conceptualizing
+  - Transformers are basically really good at value analogies
+  - Discrete program search must be "merged" into deep learning and leveraged
+    - Program synthesis 
+      - Model: graph of operators from a DSL
+      - Learning engine: combinatorial search
+      - Feedback signal: correctness check
+      - key challenge: combinatorial explosion when combining all operators of a DSL
+- Reasoning in humans is heavily guided by perception + intuition
+  - Ex: Chess
+    - Type 2 when you calculate step by step
+    - Cannot do this for every possible move (comb. explosion)
+    - Intuition from experience is used to narrow down the discrete search space
+- System 1 helps system 2 (apparently I've had these backwards) by alleviating comb. explosion via turning a lot of discrete data into a data structure that enables fast, approximate judgment calls about the target discrete space
+  - key idea: use fast-but-maybe-wrong judgment calls to keep comb. explosion in check
+  - analogy: "draw a map"
+    - take a space of discrete objects with discrete relationships that would normally require combinatorial search (all nodes in the map)
+    - can make a geometric manifold (? - continuous functions) to make fast but imprecise inferences about what set of discrete objects you need to look at 1 by 1, so this helps you keep combinatorial explosion in check
+- Requirement for deep learning: interpolative data, and lots of it
+- ARC-AGI prevents 
+- Merging DL and PS
+  - use DL as perception layer
+  - use DL to drive PS with intuitive sketches
+- how to crack ARC-AGI
+  - object/state centric
+    - "draw a map" of grid-space
+      - draw a line between the 2 points on the manifolds of I->O grids
+        - still have to do local search around them, this is fast/approximate but not correct
+        - turns PS into interpolation problem
+    - make a DL-based grid parser (input: grid, output: symbolic representation) (?)
+    - Rank/generate branching choices in search for I->O transformation (expressed as a sequence of successive grids)
+      - "In the limit this solves program synthesis!"
+    - Evaluate whether a given intermediate grid is likely to be part of the solution
+    - "etc." (?)
+    - this solves PS, turns it into pure interpolation problem
+  - program/task centric
+    - "draw a map" of program space this time
+- AGI needs new ideas - FC thinks big idea will come from an outsider 
+- Proven you can get ~50% with brute-force program search
+- Ryan Greenblatt's solution costs $10k-$20k to run
+- "I have some things that sort-of work" - FC after some guy asking if he has a solution
+- ARC-AGI is not a sufficient condition for AGI, but a necessary one (paraphrased FC)
+- FC said things he saw/learned while his kids grow up (age 1-2 especially) inspired things in ARC (hint for winning)
+  - few-shot learning ex: crawling to an object as a baby
+    - know your current state
+    - can visualize/extrapolate your goal (future state) 
+      - "latent representation of your target"
+    - planning between the 2 (few-shot PS)
+    - trying to execute, restarting
+
+## templating english language tasks to solve programs
 
 - puzzle 63613498
 - `copy the input to the output then find two objects with the same shape and turn one gray that is not in the upper left quadrant`
@@ -14,3 +105,7 @@
 - `rotate 90 then flip across y axis`
 - puzzle d4b1c2b1
 - `sub-divide every input square across x and y axes into as many sections per axis as there are different colors in the input grid`
+- puzzle a85d4709
+- `for each row in the input, create a row in the output of the same size and color the entire row based on the placement of the gray square in the input: 0,1,2 -> red, yellow, green`
+- puzzle c8cbb738
+- `

@@ -9,7 +9,14 @@ public static class SystemOne
     new List<Func<int[][], int[][]>> {
         Transpose,
         DeDupeXY,
-        RotateSquares90
+        RotateSquares90,
+        DoubleSize,
+        Rotate90,
+        ReflectAlongDiagonal,
+        ReflectHorizontally,
+        ReflectVertically,
+        Rotate180,
+        InvertColors
     }.Union(PaintBorders());
 
     private static IEnumerable<Func<int[][], int[][]>> PaintBorders()
@@ -79,7 +86,7 @@ public static class SystemOne
 
         return finalXY;
     }
-
+    
     public static int[][] RotateSquares90(int[][] x)
     {
         try
@@ -100,10 +107,33 @@ public static class SystemOne
             throw;
         }
     }
+    public static int[][] Rotate90(int[][] x)
+    {
+        int numRows = x.Length;
+        int numCols = x[0].Length;
+
+        // Create a new array with swapped dimensions
+        int[][] rotatedArray = new int[numCols][];
+        for (int i = 0; i < numCols; i++)
+        {
+            rotatedArray[i] = new int[numRows];
+        }
+
+        // Iterate through each element in the input array
+        for (int i = 0; i < numRows; i++)
+        {
+            for (int j = 0; j < numCols; j++)
+            {
+                // Place the element in the rotated position
+                rotatedArray[j][numRows - 1 - i] = x[i][j];
+            }
+        }
+
+        // Return the rotated array
+        return rotatedArray;
+    }
     public static IEnumerable<ObjectFeature> ExtractObjects(int[][] input)
     {
-        IEnumerable<ObjectFeature> output = [];
-
         // a. Objectness priors:
 
         // Object cohesion: Ability to parse grids into “objects” based on continuity criteria including
@@ -139,7 +169,8 @@ public static class SystemOne
         // • Drawing lines, connecting points, orthogonal projections.
         // • Copying, repeating objects.
 
-        return output;
+        var objs = DetectObjects(input);
+        return [];
     }
 
     public static IEnumerable<GoalFeature>? ExtractGoalFeatures(int[][] input, int[][] output)
@@ -152,6 +183,199 @@ public static class SystemOne
         // volves intentionality (e.g. figure 9). As such, the goal-directedness prior may not be strictly
         // necessary to solve ARC, but it is likely to be useful.
         throw new NotImplementedException();
+    }
+    public static int[][] ReflectAlongDiagonal(int[][] inputArray)
+    {
+        int numRows = inputArray.Length;
+        int numCols = inputArray[0].Length;
+
+        // Create a new array with the same dimensions
+        int[][] outputArray = new int[numCols][];
+        for (int i = 0; i < numCols; i++)
+        {
+            outputArray[i] = new int[numRows];
+        }
+
+        // Iterate through each element in the input array
+        for (int i = 0; i < numRows; i++)
+        {
+            for (int j = 0; j < numCols; j++)
+            {
+                // Reflect the element along the diagonal
+                outputArray[j][i] = inputArray[i][j];
+            }
+        }
+
+        // Return the transformed array
+        return outputArray;
+    }
+    public static int[][] DoubleSize(int[][] inputArray)
+    {
+        // Get the dimensions of the input array
+        int numRows = inputArray.Length;
+        int numCols = inputArray[0].Length;
+
+        // Create a new array with the same dimensions
+        int[][] outputArray = new int[numRows][];
+        for (int i = 0; i < numRows; i++)
+        {
+            outputArray[i] = new int[numCols];
+        }
+
+        // Iterate through each element in the input array
+        for (int i = 0; i < numRows; i++)
+        {
+            for (int j = 0; j < numCols; j++)
+            {
+                // Double the value and store it in the output array
+                outputArray[i][j] = inputArray[i][j] * 2;
+            }
+        }
+
+        // Return the transformed array
+        return outputArray;
+    }
+    public static int[][] ReflectHorizontally(int[][] inputArray)
+    {
+        int numRows = inputArray.Length;
+        int numCols = inputArray[0].Length;
+
+        // Create a new array with the same dimensions
+        int[][] outputArray = new int[numRows][];
+        for (int i = 0; i < numRows; i++)
+        {
+            outputArray[i] = new int[numCols];
+        }
+
+        // Iterate through each element in the input array
+        for (int i = 0; i < numRows; i++)
+        {
+            for (int j = 0; j < numCols; j++)
+            {
+                // Reflect the element horizontally
+                outputArray[i][numCols - 1 - j] = inputArray[i][j];
+            }
+        }
+
+        // Return the transformed array
+        return outputArray;
+    }
+
+
+    public static int[][] ReflectVertically(int[][] inputArray)
+    {
+        int numRows = inputArray.Length;
+        int numCols = inputArray[0].Length;
+
+        int[][] outputArray = new int[numRows][];
+        for (int i = 0; i < numRows; i++)
+        {
+            outputArray[i] = new int[numCols];
+        }
+
+        for (int i = 0; i < numRows; i++)
+        {
+            for (int j = 0; j < numCols; j++)
+            {
+                outputArray[numRows - 1 - i][j] = inputArray[i][j];
+            }
+        }
+
+        return outputArray;
+    }
+
+    public static int[][] Rotate180(int[][] inputArray)
+    {
+        int numRows = inputArray.Length;
+        int numCols = inputArray[0].Length;
+
+        int[][] outputArray = new int[numRows][];
+        for (int i = 0; i < numRows; i++)
+        {
+            outputArray[i] = new int[numCols];
+        }
+
+        for (int i = 0; i < numRows; i++)
+        {
+            for (int j = 0; j < numCols; j++)
+            {
+                outputArray[numRows - 1 - i][numCols - 1 - j] = inputArray[i][j];
+            }
+        }
+
+        return outputArray;
+    }
+
+    public static int[][] InvertColors(int[][] inputArray)
+    {
+        int numRows = inputArray.Length;
+        int numCols = inputArray[0].Length;
+        int maxColor = Colors.Max();
+
+        int[][] outputArray = new int[numRows][];
+        for (int i = 0; i < numRows; i++)
+        {
+            outputArray[i] = new int[numCols];
+        }
+
+        for (int i = 0; i < numRows; i++)
+        {
+            for (int j = 0; j < numCols; j++)
+            {
+                outputArray[i][j] = maxColor - inputArray[i][j];
+            }
+        }
+
+        return outputArray;
+    }
+public static List<List<(int, int)>> DetectObjects(int[][] inputArray)
+    {
+        int numRows = inputArray.Length;
+        int numCols = inputArray[0].Length;
+        bool[][] visited = new bool[numRows][];
+        for (int i = 0; i < numRows; i++)
+        {
+            visited[i] = new bool[numCols];
+        }
+
+        List<List<(int, int)>> objects = new List<List<(int, int)>>();
+
+        for (int i = 0; i < numRows; i++)
+        {
+            for (int j = 0; j < numCols; j++)
+            {
+                if (!visited[i][j])
+                {
+                    List<(int, int)> obj = new List<(int, int)>();
+                    FloodFill(inputArray, visited, i, j, inputArray[i][j], obj);
+                    if (obj.Count > 0)
+                    {
+                        objects.Add(obj);
+                    }
+                }
+            }
+        }
+
+        return objects;
+    }
+
+    private static void FloodFill(int[][] inputArray, bool[][] visited, int x, int y, int color, List<(int, int)> obj)
+    {
+        int numRows = inputArray.Length;
+        int numCols = inputArray[0].Length;
+        if (x < 0 || x >= numRows || y < 0 || y >= numCols || visited[x][y] || inputArray[x][y] != color)
+        {
+            return;
+        }
+
+        visited[x][y] = true;
+        obj.Add((x, y));
+
+        // Check all 4 directions (up, down, left, right)
+        FloodFill(inputArray, visited, x - 1, y, color, obj);
+        FloodFill(inputArray, visited, x + 1, y, color, obj);
+        FloodFill(inputArray, visited, x, y - 1, color, obj);
+        FloodFill(inputArray, visited, x, y + 1, color, obj);
     }
 
 
