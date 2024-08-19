@@ -24,7 +24,6 @@ public static class SystemOne
     {
         return Colors.Select(color => (Func<int[][], int[][]>)(x => PaintBorder(x, color)));
     }
-
     public static int[][] PaintBorder(int[][] x, int color)
     {
         // this function should return the input array with its outer edge painted with the given color
@@ -87,26 +86,17 @@ public static class SystemOne
 
         return finalXY;
     }
-
     public static int[][] RotateSquares90(int[][] x)
     {
-        try
+        if (!x.All(r => r.Length == x.Length))
         {
-            if (!x.All(r => r.Length == x.Length))
-            {
-                return x;
-            }
-            // this function should return the input array rotated 90 degrees clockwise
-            // e.g. Rotate90([[1, 2], [4, 5]]) => [[4, 1], [5, 2]]
-            var xMatrix = Matrix<float>.Build.DenseOfRowArrays(x.Select(row => row.Select(val => (float)val).ToArray()));
-            var xRot = xMatrix.ToColumnArrays().Select(row => row.Reverse().Select(val => (int)val).ToArray()).ToArray();
-            return xRot;
+            return x;
         }
-        catch (System.Exception e)
-        {
-
-            throw;
-        }
+        // this function should return the input array rotated 90 degrees clockwise
+        // e.g. Rotate90([[1, 2], [4, 5]]) => [[4, 1], [5, 2]]
+        var xMatrix = Matrix<float>.Build.DenseOfRowArrays(x.Select(row => row.Select(val => (float)val).ToArray()));
+        var xRot = xMatrix.ToColumnArrays().Select(row => row.Reverse().Select(val => (int)val).ToArray()).ToArray();
+        return xRot;
     }
     public static int[][] Rotate90(int[][] x)
     {
@@ -133,7 +123,7 @@ public static class SystemOne
         // Return the rotated array
         return rotatedArray;
     }
-    public static IEnumerable<ObjectFeature> ExtractObjects(int[][] input)
+    public static IEnumerable<ObjectBox> ExtractObjects(int[][] input)
     {
         // a. Objectness priors:
 
@@ -149,7 +139,26 @@ public static class SystemOne
         // one object being translated until it is in contact with another (figure 7), or a line “growing”
         // until it “rebounds” against another object (figure 8).
 
-        // b. Goal-directedness prior: See ExtractGoalFeatures for more information.
+        var objs = DetectObjects(input);
+
+        // TODO: objs is a list of lists of coordinates representing every point in each object
+        // return objs.Select(obj => new ObjectBox
+        // {
+        //     StartXY = (obj.Min(p => p.Item1), obj.Min(p => p.Item2)),
+        //     EndXY = (obj.Max(p => p.Item1), obj.Max(p => p.Item2)),
+        //     // RawData = obj.Select(p => input[p.Item1][p.Item2]).ToArray()
+        // });
+
+        return [];
+    }
+    public static IEnumerable<GoalFeature>? ExtractGoalFeatures(int[][] input, int[][] output)
+    {
+        // b. Goal-directedness prior:
+
+        // While ARC does not feature the concept of time, many of the input/output grids can be
+        // effectively modeled by humans as being the starting and end states of a process that in-
+        // volves intentionality (e.g. figure 9). As such, the goal-directedness prior may not be strictly
+        // necessary to solve ARC, but it is likely to be useful.
 
         // c. Numbers and Counting priors:
 
@@ -169,21 +178,7 @@ public static class SystemOne
         // • Containing / being contained / being inside or outside of a perimeter.
         // • Drawing lines, connecting points, orthogonal projections.
         // • Copying, repeating objects.
-
-        var objs = DetectObjects(input);
         return [];
-    }
-
-    public static IEnumerable<GoalFeature>? ExtractGoalFeatures(int[][] input, int[][] output)
-    {
-        return [];
-        // b. Goal-directedness prior:
-
-        // While ARC does not feature the concept of time, many of the input/output grids can be
-        // effectively modeled by humans as being the starting and end states of a process that in-
-        // volves intentionality (e.g. figure 9). As such, the goal-directedness prior may not be strictly
-        // necessary to solve ARC, but it is likely to be useful.
-        throw new NotImplementedException();
     }
     public static int[][] ReflectAlongDiagonal(int[][] inputArray)
     {
@@ -261,8 +256,6 @@ public static class SystemOne
         // Return the transformed array
         return outputArray;
     }
-
-
     public static int[][] ReflectVertically(int[][] inputArray)
     {
         int numRows = inputArray.Length;
@@ -284,7 +277,6 @@ public static class SystemOne
 
         return outputArray;
     }
-
     public static int[][] Rotate180(int[][] inputArray)
     {
         int numRows = inputArray.Length;
@@ -306,7 +298,6 @@ public static class SystemOne
 
         return outputArray;
     }
-
     public static int[][] InvertColors(int[][] inputArray)
     {
         int numRows = inputArray.Length;
@@ -339,7 +330,7 @@ public static class SystemOne
             visited[i] = new bool[numCols];
         }
 
-        List<List<(int, int)>> objects = new List<List<(int, int)>>();
+        List<List<(int, int)>> objects = [];
 
         for (int i = 0; i < numRows; i++)
         {
@@ -347,7 +338,7 @@ public static class SystemOne
             {
                 if (!visited[i][j])
                 {
-                    List<(int, int)> obj = new List<(int, int)>();
+                    List<(int, int)> obj = [];
                     FloodFill(inputArray, visited, i, j, inputArray[i][j], obj);
                     if (obj.Count > 0)
                     {
@@ -359,7 +350,6 @@ public static class SystemOne
 
         return objects;
     }
-
     private static void FloodFill(int[][] inputArray, bool[][] visited, int x, int y, int color, List<(int, int)> obj)
     {
         int numRows = inputArray.Length;
@@ -378,26 +368,20 @@ public static class SystemOne
         FloodFill(inputArray, visited, x, y - 1, color, obj);
         FloodFill(inputArray, visited, x, y + 1, color, obj);
     }
-
     public static int[][] Rotate270(int[][] arr)
     {
         int n = arr.Length;
         for (int i = 0; i < n / 2; i++)
         {
             int j = i + (n - i - 1);
-            int[] temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
+            (arr[j], arr[i]) = (arr[i], arr[j]);
         }
         for (int i = 0; i < n / 2; i++)
         {
             int j = 2 * i + 1;
             int k = n - j;
-            int[] temp = arr[j];
-            arr[j] = arr[k];
-            arr[k] = temp;
+            (arr[k], arr[j]) = (arr[j], arr[k]);
         }
         return arr;
     }
-
 }

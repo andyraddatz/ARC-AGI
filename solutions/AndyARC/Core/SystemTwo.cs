@@ -11,19 +11,27 @@ public static class SystemTwo
         foreach (var filePath in puzzleFilePaths)
         {
             var puz = Puzzle.FromJson(filePath);
-            var action = GetAction(puz);
             var win = false;
-            foreach (var t in puz.Test)
+            var actionsLeft = true;
+            while (!win && actionsLeft)
             {
-                var modified = action(t.Input);
-                win = IsMatch(t.Output, modified);
-            }
-            if (win)
-            {
-                wins++;
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"TEST WIN: {puz.Name}");
-                Console.ForegroundColor = default;
+                var action = GetAction(puz);
+                foreach (var t in puz.Test)
+                {
+                    var modified = action(t.Input);
+                    win = IsMatch(t.Output, modified);
+                }
+                if (win)
+                {
+                    wins++;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"TEST WIN: {puz.Name}");
+                    Console.ForegroundColor = default;
+                }
+
+                // todo: try again until compute runs out
+                actionsLeft = false;
+
             }
             puzzles++;
         }
@@ -36,9 +44,7 @@ public static class SystemTwo
         foreach (var t in puz.Train)
         {
             // list objects of the training inputs
-            // t.InputObjects = SystemOne.ExtractObjects(t.Input);
             // list objects of the training outputs
-            // t.OutputObjects = SystemOne.ExtractObjects(t.Output);
             // list features of the goal
             t.GoalFeatures = SystemOne.ExtractGoalFeatures(t.Input, t.Output);
         }
@@ -68,17 +74,23 @@ public static class SystemTwo
 
     private static IEnumerable<Func<int[][], int[][]>> GenerateActions(Puzzle puz)
     {
+        Console.WriteLine($"-- Generating Actions for Puzzle: {puz.Name} --");
         // list features of the test inputs
-        // foreach (var t in puz.Test) t.InputObjects = SystemOne.ExtractObjects(t.Input);
+        for (int i = 0; i < puz.Train.Count(); i++)
+        {
+            var t = puz.Train.ElementAt(i);
+            Console.WriteLine($"Train {i,10}: Objects: {t.InputObjects.Count(),10}");
+        }
 
         // devise action plan
         //      find features in common between training inputs + test inputs
+
         //      generate hypotheses for action(s) that transforms ARC inputs to outputs
         //          verify hypothesis for all training inputs->outputs
         //          verify action is plausible for the test inputs
         // use action plan to generate test outputs
         foreach (var a in SystemOne.Actions) yield return a;
-        Func<int[][], int[][]> compoundAction = (x) =>
+        yield return (x) =>
         {
             var modified = x;
             foreach (var action in SystemOne.Actions)
@@ -87,9 +99,6 @@ public static class SystemTwo
             }
             return modified;
         };
-        yield return compoundAction;
-        // var allFuncs = SystemOne.Actions.Append(compoundAction);
-        // return allFuncs;
     }
 
     private static bool IsPlausible(Func<int[][], int[][]> action, IEnumerable<ARCSample> test)

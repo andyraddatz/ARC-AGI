@@ -15,17 +15,17 @@ namespace AndyARC.Core.Features;
 /// until it “rebounds” against another object
 /// </para>
 /// </summary>
-public class ObjectFeature
+public class ObjectBox
 {
-    public required Point StartXY { get; set; }
-    public required Point EndXY { get; set; }
+    public required (int, int) StartXY { get; set; }
+    public required (int, int) EndXY { get; set; }
     public required int[][] RawData { get; set; }
-    public int Height => EndXY.Y - StartXY.Y;
-    public int Width => EndXY.X - StartXY.X;
-    public bool IsSquare => Height == Width;
-    public IEnumerable<Point> Symbol { get; set; } = [];
+    // public int Height => EndXY.Y - StartXY.Y;
+    // public int Width => EndXY.X - StartXY.X;
+    // public bool IsSquare => Height == Width;
+    public IEnumerable<Point> Signal { get; set; } = [];
     public IEnumerable<Point> Noise { get; set; } = [];
-    public IEnumerable<ObjectFeature> OccludedBy { get; set; } = [];
-    public IEnumerable<ObjectFeature> Contains { get; set; } = [];
-    public IEnumerable<ObjectFeature> Touches { get; set; } = [];
+    // public IEnumerable<ObjectFeature> OccludedBy { get; set; } = [];
+    // public IEnumerable<ObjectFeature> Contains { get; set; } = [];
+    // public IEnumerable<ObjectFeature> Touches { get; set; } = [];
 }

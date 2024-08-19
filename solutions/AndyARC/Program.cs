@@ -13,10 +13,12 @@ var (tests, wins) = SystemTwo.SolvePuzzles(trainingFiles);
 Console.ForegroundColor = ConsoleColor.White;
 Console.WriteLine($"Training set Tests: {tests}, Wins: {wins}");
 
-// eval
-var evalFiles = Directory.GetFiles("../../data/evaluation", "*.json");
-Console.ForegroundColor = ConsoleColor.White;
-Console.WriteLine("Evaluation set...");
-(tests, wins) = SystemTwo.SolvePuzzles(evalFiles);
-Console.ForegroundColor = ConsoleColor.White;
-Console.WriteLine($"Evaluation set Tests: {tests}, Wins: {wins}");
+// Console.WriteLine();
+
+// // eval
+// var evalFiles = Directory.GetFiles("../../data/evaluation", "*.json");
+// Console.ForegroundColor = ConsoleColor.White;
+// Console.WriteLine("Evaluation set...");
+// (tests, wins) = SystemTwo.SolvePuzzles(evalFiles);
+// Console.ForegroundColor = ConsoleColor.White;
+// Console.WriteLine($"Evaluation set Tests: {tests}, Wins: {wins}");
