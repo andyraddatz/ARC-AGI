@@ -142,14 +142,18 @@ public static class SystemOne
         var objs = DetectObjects(input);
 
         // TODO: objs is a list of lists of coordinates representing every point in each object
-        // return objs.Select(obj => new ObjectBox
-        // {
-        //     StartXY = (obj.Min(p => p.Item1), obj.Min(p => p.Item2)),
-        //     EndXY = (obj.Max(p => p.Item1), obj.Max(p => p.Item2)),
-        //     // RawData = obj.Select(p => input[p.Item1][p.Item2]).ToArray()
-        // });
+        return objs.Select(obj =>
+        {
+            var startXY = (obj.Min(p => p.Item1), obj.Min(p => p.Item2));
+            var endXY = (obj.Max(p => p.Item1), obj.Max(p => p.Item2));
 
-        return [];
+            // pass in the sub-grid that contains the object in the smallest square possible
+            var data = input[startXY.Item1..(endXY.Item1 + 1)]
+                .Select(row => row[startXY.Item2..(endXY.Item2 + 1)])
+                .ToArray();
+
+            return new ObjectBox(data, obj);
+        });
     }
     public static IEnumerable<GoalFeature>? ExtractGoalFeatures(int[][] input, int[][] output)
     {

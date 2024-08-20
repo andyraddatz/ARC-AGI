@@ -11,8 +11,8 @@ public class ARCSample(int[][] input, int[][] output)
     public int[][] Output { get; set; } = output;
 
     // objectness
-    public IEnumerable<ObjectBox> InputObjects { get; } = SystemOne.ExtractObjects(input);
-    public IEnumerable<ObjectBox>? OutputObjects { get; } = SystemOne.ExtractObjects(output);
+    public IEnumerable<IEnumerable<(int, int)>> InputObjects { get; } = SystemOne.DetectObjects(input);
+    public IEnumerable<IEnumerable<(int, int)>> OutputObjects { get; } = SystemOne.DetectObjects(output);
 
     // goal-directedness
     public IEnumerable<GoalFeature>? GoalFeatures { get; set; } = null;

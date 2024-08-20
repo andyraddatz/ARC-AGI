@@ -79,7 +79,7 @@ public static class SystemTwo
         for (int i = 0; i < puz.Train.Count(); i++)
         {
             var t = puz.Train.ElementAt(i);
-            Console.WriteLine($"Train {i,10}: Objects: {t.InputObjects.Count(),10}");
+            Console.WriteLine($"Ex {i} - {t.InputObjects.Count(),-3} input objects, {t.OutputObjects.Count(),-3} output objects");
         }
 
         // devise action plan

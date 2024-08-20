@@ -15,16 +15,19 @@ namespace AndyARC.Core.Features;
 /// until it “rebounds” against another object
 /// </para>
 /// </summary>
-public class ObjectBox
+public class ObjectBox(int[][] data, IEnumerable<(int, int)> signal)
 {
-    public required (int, int) StartXY { get; set; }
-    public required (int, int) EndXY { get; set; }
-    public required int[][] RawData { get; set; }
+    public int[][] RawData { get; } = data;
+    public IEnumerable<(int, int)> Signal { get; } = signal;
+    // public required (int, int) StartXY { get; set; } = (points.Min(p => p.X), points.Min(p => p.Y));
+    // public required (int, int) EndXY { get; set; } = (points.Max(p => p.X), points.Max(p => p.Y));
+    // noise should represent all of the points in the bounding box that are not part of the object
+    // public IEnumerable<Point> Noise { get; set; } 
+
+    // TODO: add more properties for filtering and analysis
     // public int Height => EndXY.Y - StartXY.Y;
     // public int Width => EndXY.X - StartXY.X;
     // public bool IsSquare => Height == Width;
-    public IEnumerable<Point> Signal { get; set; } = [];
-    public IEnumerable<Point> Noise { get; set; } = [];
     // public IEnumerable<ObjectFeature> OccludedBy { get; set; } = [];
     // public IEnumerable<ObjectFeature> Contains { get; set; } = [];
     // public IEnumerable<ObjectFeature> Touches { get; set; } = [];
